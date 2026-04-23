@@ -6,17 +6,21 @@ import smtplib
 
 load_dotenv()
 
+topic = input("What topic would you like? ")
+
+REQUEST_URL = f"https://newsapi.org/v2/everything?q={topic.replace(" ", "_")}&from=2026-03-23&sortBy=publishedAt&apiKey={os.getenv("NEWS_API_KEY")}&language=en"
+
 def get_news_content():
     res = requests.get(
-        os.getenv("REQUEST_URL"),
+        REQUEST_URL,
         headers={"User-Agent": "Mozilla/5.0"}
     )
     content = res.json()
-    return content["articles"]
+    return content["articles"][:20]
 
 def format_articles(content):
     return "\n\n".join(
-        f"{article['title']}\n{article['description']}"
+        f"{article['title']}\n{article['description']}\n{article['url']}"
         for article in content
         if article["title"] and article["description"]
     )
